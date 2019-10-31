@@ -1,0 +1,325 @@
+.bg-dark { 
+	background-color:#111 !important;
+}
+table.dataTable.dtr-column>tbody>tr>td.control:before, 
+table.dataTable.dtr-column>tbody>tr>th.control:before {
+    background-color: #13ABDD;
+}
+.padpos {
+    padding-right:12px;
+}
+div.dt-buttons {
+    float:right !important;
+}        
+.dataTables_filter {
+    float:left !important;
+    margin-right:12px;
+}
+.tooltip {
+    white-space: nowrap;
+}
+.tooltip-inner {
+    max-width: 250px;
+}
+.eventLogo {
+  margin-right:5px; 
+  margin-top:-4px;
+  display:inline;
+  height:15px;
+}
+@media screen and (max-width: 640px) {
+    .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter {
+        float: left;
+    }
+    .dataTables_wrapper .dataTables_filter {
+        margin-top: 0em;                
+        margin-left:-10px;
+    }
+    .dataTables_filter input {
+        width:160px;
+    }
+    div.dt-buttons {
+        width: 100%;
+    }        
+    .buttons-collection {
+        float:right;
+    }
+    .eventLogo {
+       display:none;
+    }
+    .fencer-header {
+        clear:left;
+    }
+    .fencer-banner {
+        padding-left:7px !important;
+    }
+    .fencer-banner H4 {
+        font-size:115% !important;
+        padding-top:5px !important;
+    }
+    .flag-box {
+        display:none !important;
+    }
+    .all-medals {
+        float:right;
+    }
+    .medal-box {
+        width:44px !important;
+        height:52px !important;
+        margin:12px 4px 0px 0px !important;
+    }
+    .card-header-gold, .card-header-silver, .card-header-bronze {
+        font-size:70% !important;
+    }
+}
+
+:root {
+  --jumbotron-padding-y: 3rem;
+}
+
+.jumbotron {
+  padding-top: var(--jumbotron-padding-y);
+  padding-bottom: var(--jumbotron-padding-y);
+  margin-bottom: 0;
+  background-color: #fff;
+}
+@media (min-width: 768px) {
+  .jumbotron {
+    padding-top: calc(var(--jumbotron-padding-y) * 2);
+    padding-bottom: calc(var(--jumbotron-padding-y) * 2);
+  }
+}
+
+.jumbotron p:last-child {
+  margin-bottom: 0;
+}
+
+.jumbotron-heading {
+  font-weight: 300;
+}
+
+.jumbotron .container {
+  max-width: 40rem;
+}
+
+footer {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+footer p {
+  margin-bottom: .25rem;
+}
+
+.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+.dataTables_length select, .dataTables_filter input {
+  height: 40px;
+  padding: 6px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555555;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.index table {
+	padding-top:12px;
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    display: none;
+}
+
+#getRankButton {
+	margin:-3px 0px 0px 12px;
+}
+
+.mainFilters {
+  display:inline;
+}
+
+@media screen and (max-width: 800px) {
+  .mainFilters { clear:left; margin-left:-12px; display:block; }            
+  #getRankButton { margin-left:12px; } 
+}
+
+.buttons-colvisGroup {
+  float:left;
+}
+
+.bg-qualifier {
+  background-color:#DCF6FE !important;
+}
+
+.bg-golden-ticket {
+  background:url(../flags/ENG.png) right top no-repeat #DCF6FE !important;
+  background-size: 12px !important;
+}
+.firstPlaceEngarde { 
+    background-color: #F7F74C !important; 
+}
+.secondPlaceEngarde { 
+    background-color: #C3C3C3 !important; 
+}
+.thirdPlaceEngarde { 
+    background-color: #B58231 !important; 
+}
+.placeEngarde { 
+    color: #FFCCCC; 
+}
+#chartdiv {
+    width: 100%;
+    height: 320px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 9pt;
+}
+
+#chartdiv1 {
+    width: 100%;
+    height: 250px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 9pt;
+}
+#chartdiv2 {
+    width: 100%;
+    height: 250px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 9pt;
+}
+
+.competition-banner {
+    border-bottom:2px solid #ddd; 
+    margin-bottom:20px; 
+    background:#eee no-repeat top left; 
+    padding:10px 0px 0px 15px;
+}
+
+.fencer-banner {
+    border-bottom:2px solid #ddd; 
+    margin-bottom:10px; 
+    background:url(../img/fencerbanner.png) #eee no-repeat top left; 
+    padding:10px 0px 10px 15px;
+}
+
+.nif-box {
+    margin:15px 15px 0px 0px;
+}
+.nif-box .card-header { 
+    padding-top:0.25rem !important; 
+    padding-bottom:0.25rem !important; 
+}
+.nif-box .card-body { 
+    padding-top:0.50rem !important; 
+    padding-bottom:0.50rem !important; 
+    font-size:110%;
+}
+.dtrg-level-0 td {
+    background-color:#d1e4eb !important;
+    padding-top:0.55rem !important; 
+    padding-bottom:0.55rem !important; 
+    padding-left:0.5rem !important; 
+    border-bottom:7px solid #fff;
+    border-top:5px solid #fff !important;
+}
+.dtrg-level-1 td {
+    padding-top:0.50rem !important; 
+    padding-bottom:0.50rem !important; 
+    padding-left:0.5rem !important; 
+    font-weight:Bold;
+    border-bottom:1px solid #aaa;
+    background-color:#ddd !important;
+}
+.groupEntries {
+  font-weight:Normal;
+  color:#444;
+}
+.hideYear {
+  display:none;
+}
+.flag-box {
+    height: 56px;
+    width: 60px;
+    margin:12px 10px 20px 6px;
+}
+.medal-box {
+    height: 56px;
+    width: 60px;
+    margin:12px 6px 20px 3px;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.card-header-bronze {
+    background-color:#B58231;
+    font-size:11pt;
+}
+.card-header-silver {
+    background-color:#C3C3C3;
+    font-size:11pt;
+}
+.card-header-gold {
+    background-color:#F7F74C;
+    font-size:11pt;
+}
+.card-body-medal {
+    font-size:120%;
+}
+
+.sr_data {
+    border-bottom:1px solid #eee; 
+    float:left;
+    width:100%;
+    cursor: pointer;
+}
+.sr_name { float:left; font-size:95%; }
+.sr_yob { color:#444; text-align:right; font-size:90%; }
+.sr_flag IMG { width:18px; height:18px; vertical-align:top !important; float:right; }
+.sr_club { font-size:80%; color:#666; clear:both; float:left; }
+
+.tt-menu {
+  min-width:200px;
+  width:280px;
+  background-color:#ffffff;
+  border-radius:6px;
+  box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);
+  background-clip:padding-box;
+}
+
+.tt-hint {
+  color: #999
+}
+
+.tt-suggestion {
+  padding: 6px 14px;
+  font-size: 1em;
+  line-height: 20px;
+}
+
+.tt-suggestion.tt-cursor {
+  background-color: #eee;
+}
+
+.tt-cursor {
+  background-color: #eee;
+}
+
+.tt-highlight{
+    color:#17A2B8;
+    font-weight:Normal;
+    border-bottom:1px dotted #ddd;
+}
+.subBar {
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 10px;
+    background: #eee;
+    padding: 15px 0px 5px 15px;
+}
