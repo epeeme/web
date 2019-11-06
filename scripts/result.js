@@ -383,8 +383,13 @@
             if (row.fencerFirstname.length + row.fencerSurname.length > 22) {
                 var f2 = data.split(' ');
                 if (f2.length > 1) {
-                    data = f2.shift() + ' <span class="d-none d-lg-inline">' + f2.join(' ') + '</span>';
-                }
+                    if (row.fencerFirstname === data) {
+                        data = f2.shift() + ' <span class="d-none d-lg-inline">' + f2.join(' ') + '</span>';
+                    } else {
+                        var lastNameTemp = f2.pop();
+                        data = '<span class="d-none d-lg-inline">' + f2.join(' ') + '</span> ' + lastNameTemp;
+                    }                    
+                } 
             }
             return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
         }
