@@ -26,15 +26,11 @@
                                   };
 
             DataColumns[colIndex++] = { data: "fencerFirstname", 
-                                        render: function (data, type, row) {
-                                            return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
-                                        },
+                                        render: $.fn.dataTable.render.fencerName(),
                                         responsivePriority: 2 
                                       }; 
             DataColumns[colIndex++] = { data: "fencerSurname",
-                                        render: function (data, type, row) {
-                                            return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
-                                        },
+                                        render: $.fn.dataTable.render.fencerName(),
                                         responsivePriority: 3  
                                       };
 
@@ -94,7 +90,7 @@
             DataColumns[colIndex++] = { data: "yob", responsivePriority: 5 };
             DataColumns[colIndex++] = { data: "country",
                                         render: function (data, type, row) {
-                                                    return row.country !== null ? '<img style="width:18px; height:18px; margin-right:10px; margin-top:-3px;" src="flags/'+row.country+'.png\">' + row.country : '<span style="visibility:hidden;">~</span>';
+                                                    return row.country !== null ? '<!--<span style="margin-right:10px;" class="flag flag-' + row.country.toLowerCase() + '">//--></span><img style="width:18px; height:18px; margin-right:10px; margin-top:-3px;" src="flags/'+row.country+'.png\">' + row.country : '<span style="visibility:hidden;">~</span>';
                                                 }, 
                                         responsivePriority: 99
                                       };
@@ -258,14 +254,10 @@
                  columns: [
                      { data: "year" },
                      { data: "fencerFirstname",
-                       render: function (data, type, row) {
-                           return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
-                       },
+                       render: $.fn.dataTable.render.fencerName(),
                      },
                      { data: "fencerSurname",
-                       render: function (data, type, row) {
-                           return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
-                       },
+                       render: $.fn.dataTable.render.fencerName(),
                      },
                      { data: "country",
                        render: function (data, type, row) {
@@ -313,15 +305,11 @@
                        responsivePriority: 2
                      },
                      { data: "fencerFirstname",
-                       render: function (data, type, row) {
-                          return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
-                       },
+                       render: $.fn.dataTable.render.fencerName(),
                        responsivePriority: 3
                      },
                      { data: "fencerSurname",
-                       render: function (data, type, row) {
-                           return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
-                       },
+                       render: $.fn.dataTable.render.fencerName(),
                        responsivePriority: 4                     
                      },
                      { data: "country",
@@ -389,5 +377,17 @@
 
         });
     }
+    
+    $.fn.dataTable.render.fencerName = function () {
+        return function ( data, type, row ) {
+            if (row.fencerFirstname.length + row.fencerSurname.length > 22) {
+                var f2 = data.split(' ');
+                if (f2.length > 1) {
+                    data = f2.shift() + ' <span class="d-none d-lg-inline">' + f2.join(' ') + '</span>';
+                }
+            }
+            return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
+        }
+    };
 
 }(window.result = window.result || {}, jQuery));

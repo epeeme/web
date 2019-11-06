@@ -89,14 +89,10 @@
                                     };
 
             DataColumns[colIndex++] = { data: "fencerFirstname", 
-                                        render: function (data, type, row) {
-                                            return '<a href="fencer.php?f=' + row.fencerID + '">' + data + '</a>';
-                                        },                                        
+                                        render: $.fn.dataTable.render.fencerName(),                                  
                                         responsivePriority: 2 }; 
             DataColumns[colIndex++] = { data: "fencerSurname", 
-                                        render: function (data, type, row) {
-                                            return '<a href="fencer.php?f=' + row.fencerID + '">' + data + '</a>';
-                                        },                     
+                                        render: $.fn.dataTable.render.fencerName(),               
                                         responsivePriority: 3  };
 
             DataColumns[colIndex++] = { data: "sex", visible: false };
@@ -262,5 +258,17 @@
             });                   
         });
     }
+
+    $.fn.dataTable.render.fencerName = function () {
+        return function ( data, type, row ) {
+            if (row.fencerFirstname.length + row.fencerSurname.length > 22) {
+                var f2 = data.split(' ');
+                if (f2.length > 1) {
+                    data = f2.shift() + ' <span class="d-none d-lg-inline">' + f2.join(' ') + '</span>';
+                }
+            }
+            return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
+        }
+    };
 
 }(window.event = window.event || {}, jQuery));
