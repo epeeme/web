@@ -11,10 +11,13 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowgroup/1.1.1/css/rowGroup.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.css">
     <link href='https://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css'>
+    <link rel="canonical" href="https://epee.me/result.php?r=<?php echo htmlspecialchars((int)$_GET['r']); ?>">
+
     <meta name="description" content="Results & ranking data from LPJS, Elite Epee, BYC, EYC and other UK youth, cadet & junior fencing competitions">
     <meta name="keywords" content="fencing, fence, fencer, epee, epeeist, results, ranking, leon paul, elite epee, britih fencing, england fencing, britishfencing, database, data, best, top, clubs, cadet, junior, youth">
     <meta name="author" content="Dan Kew">
     <link href="css/common.css" rel="stylesheet">
+    <link href="css/flag-css.min.css" rel="stylesheet">
     <title>epee.me - Competition Result</title>
     <style>
     </style>
