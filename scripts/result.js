@@ -68,7 +68,7 @@
                                                     }, 
                                             responsivePriority: 4, 
                                             visible: true }; 
-            } else if (eData.eventType == 'Open') { 
+            } else if ((eData.eventType == 'Open') && (eData.age == 'Snr')) { 
                 var openForumla = eData.year >= 2014 ? "RankingPoints1" : "RankingPoints2";
                 DataColumns[colIndex++] = { data: openForumla,
                                             render: function (data, type, row) {
