@@ -62,9 +62,11 @@
                 </div>
             </div>
             <div class="row bg-white no-gutters">
-                <div class="col-12 col-lg-4 px-2 px-lg-4 pt-2 pb-4">
-                    <img src="img/england.png" alt="England Fencing">
-                    <p>Current (U14 / U17) and historical England (U13 / U15) epee rankings.</p>
+                <div class="col-12 col-lg-3 px-2 px-lg-3 pt-2 pb-4">
+                    <div style="height:135px;">
+                        <img src="img/england.png" alt="England Fencing">
+                        <p>Current (U14 / U17) and historical England (U13 / U15) epee rankings.</p>
+                    </div>
                     <table id="england" class="display compact" style="width:100%">
                     <thead><tr><th></th><th></th><th></th></tr></thead>
                     <tbody>
@@ -81,9 +83,11 @@
                     </tbody>
                     </table>
                 </div>
-                <div class="col-12 col-lg-4 px-2 px-lg-4 pt-2 pb-4">
-                    <img src="img/eliteEpeeLogo.png" alt="Elite Epee" height="40" class="mt-2 mb-1">
-                    <p>Elite Epee Rankings from 2017 through to the current <?php echo date("Y"); ?> season.</p>
+                <div class="col-12 col-lg-3 px-2 px-lg-3 pt-2 pb-4">
+                    <div style="height:135px;">
+                        <img src="img/eliteEpeeLogo.png" alt="Elite Epee" height="40" class="mt-2 mb-1">
+                        <p>Elite Epee Rankings from 2017 through to the current <?php echo date("Y"); ?> season.</p>
+                    </div>
                     <table id="elite" class="display compact" style="width:100%">
                     <thead><tr><th></th><th></th><th></th><th></th><th></th><th></th></tr></thead>
                     <tbody>
@@ -93,7 +97,7 @@
                           <td><a href="elite.php?y=2019&a=u12&s=male">U12</td>
                           <td><a href="elite.php?y=2019&a=u14&s=male">U14</td>
                           <td><a href="elite.php?y=2019&a=u17&s=male">U17</td>
-                          <td><a href="elite.php?y=2019&a=senior&s=male">Senior</td>
+                          <td><a href="elite.php?y=2019&a=senior&s=male">Snr</td>
                         </tr>
                         <tr>
                           <td>Girls</td>
@@ -101,14 +105,16 @@
                           <td><a href="elite.php?y=2019&a=u12&s=female">U12</td>
                           <td><a href="elite.php?y=2019&a=u14&s=female">U14</td>
                           <td><a href="elite.php?y=2019&a=u17&s=female">U17</td>
-                          <td><a href="elite.php?y=2019&a=senior&s=female">Senior</td>
+                          <td><a href="elite.php?y=2019&a=senior&s=female">Snr</td>
                         </tr>
                         </tbody>
                     </table>
-                </div>  
-                <div class="col-12 col-lg-4 px-2 px-lg-4 pt-2 pb-4">
-                    <img src="img/lpjs.png" alt="Leon Paul Junior Series" height="45" class="mt-2">
-                    <p>Leon Paul Junior Series rankings from 2008 to the current <?php echo date("Y"); ?> season.</p>
+                </div>                  
+                <div class="col-12 col-lg-3 px-2 px-lg-3 pt-2 pb-4">
+                    <div style="height:135px;">
+                        <img src="img/lpjs.png" alt="Leon Paul Junior Series" height="45" class="mt-2">
+                        <p>Leon Paul Junior Series rankings from 2008 to the current <?php echo date("Y"); ?> season.</p>
+                    </div>
                     <table id="lpjs" class="display compact" style="width:100%">
                     <thead><tr><th></th><th></th><th></th><th></th><th></th></tr></thead>
                     <tbody>
@@ -125,6 +131,43 @@
                           <td><a href="lpjs.php?y=2019&a=u11&s=female">U11</a></td>
                           <td><a href="lpjs.php?y=2019&a=u13&s=female">U13</a></td>
                           <td><a href="lpjs.php?y=2019&a=u15&s=female">U15</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-12 col-lg-3 px-2 px-lg-3 pt-2 pb-4">
+                    <div style="height:135px;">
+                        <img src="img/tys.png" alt="The Youth Series" height="100" class="pr-3" style="float:left;">
+                        <p>The Youth Series rankings from 2019 to the current <?php echo date("Y"); ?> season.</p>
+                    </div>
+                    <table id="tys" class="display compact" style="width:100%">
+                    <thead><tr><th></th><th></th><th></th><th></th><th></th></tr></thead>
+                    <tbody>
+                        <tr>
+                          <td>Boys</td>
+                          <td><a href="tys.php?y=2019&a=u10&s=male">U10</a></td>
+                          <td><a href="tys.php?y=2019&a=u12&s=male">U12</a></td>
+                          <td><a href="tys.php?y=2019&a=u14&s=male">U14</a></td>
+                          <?php 
+                            if (date("Y") == 2019) {
+                                echo '<td><a href="tys.php?y=2019&a=u16&s=male">U16</a></td>';
+                            } else {
+                                echo '<td><a href="tys.php?y=2019&a=u17&s=male">U17</a></td>';
+                            }
+                          ?>                          
+                        </tr>
+                        <tr>
+                          <td>Girls</td>
+                          <td><a href="tys.php?y=2019&a=u10&s=female">U10</a></td>
+                          <td><a href="tys.php?y=2019&a=u12&s=female">U12</a></td>
+                          <td><a href="tys.php?y=2019&a=u14&s=female">U14</a></td>
+                          <?php 
+                            if (date("Y") == 2019) {
+                                echo '<td><a href="tys.php?y=2019&a=u16&s=female">U16</a></td>';
+                            } else {
+                                echo '<td><a href="tys.php?y=2019&a=u17&s=female">U17</a></td>';
+                            }
+                          ?>
                         </tr>
                         </tbody>
                     </table>
@@ -174,6 +217,12 @@
                 "info":     false                
             });
             $('#lpjs').DataTable({
+                "paging":   false,
+                "searching": false,
+                "ordering": false,
+                "info":     false                
+            });
+            $('#tys').DataTable({
                 "paging":   false,
                 "searching": false,
                 "ordering": false,
