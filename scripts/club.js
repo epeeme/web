@@ -50,10 +50,26 @@
                                 },
                                 visible: countryCol
                             },  
-                            { data: "Active" },
-                            { data: "FirstRep" },
-                            { data: "LastRep" },
-                            { data: "TimesRep" },
+                            { data: "Active",
+                                render: function (data, type, row) {
+                                    return data !== false ? 'Yes' : '<span style="color:#aaa;">No</span>';
+                                },
+                            },
+                            { data: "FirstRep",
+                                render: function (data, type, row) {
+                                    return row.Active !== false ? data : '<span style="color:#aaa;">' + data + '</span>';
+                                },
+                            },
+                            { data: "LastRep",
+                                render: function (data, type, row) {
+                                    return row.Active !== false ? data : '<span style="color:#aaa;">' + data + '</span>';
+                                },
+                            },
+                            { data: "TimesRep",
+                                render: function (data, type, row) {
+                                    return row.Active !== false ? data : '<span style="color:#aaa;">' + data + '</span>';
+                                },
+                            },
                             { data: "blank" }
                         ],
                         order: [ 2, "asc" ],
