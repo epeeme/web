@@ -32,7 +32,19 @@
                     </div>
                 </div>
             </div>
-            <div class="row no-gutters">
+            <div class="row no-gutters fencer-graphs" style="display:none;">
+                <div class="col-lg-12">
+                    <div class="row no-gutters">
+                        <div class="no-gutters col-12 dataTables_length">
+                            <div style="border-bottom:2px solid #ddd; margin-bottom:10px; background:#eee; padding:10px 0px 0px 15px;">
+                                <h6 class="fencer-finishing">Competition Activity</h6>
+                            </div>
+                        </div>
+                        <div id="chartdiv1"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row no-gutters" style="padding-bottom:10px; padding-top:30px;">
                 <div class="index1 col-sm-12"></div>
             </div>
         </div>
