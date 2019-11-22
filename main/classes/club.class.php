@@ -7,6 +7,25 @@ require_once "DB.class.php";
 
 class club extends DB {
     
+    public function getNumberOfComps($data) {
+        $sqlBuild = [];
+        $yearIndex = 2005;
+        $endYear = date("Y");
+        do {
+            $sqlBuild[] = "SELECT '".$yearIndex."' AS year, '".substr($yearIndex, 2, 2)."' AS yearShort, count(*) AS cCount, count(DISTINCT fencerID) AS cCount2
+                           FROM results 
+                           LEFT OUTER JOIN eventDates ON eventDates.ID = results.dateID 
+                           WHERE fencerClubID = :clubID AND year = ".$yearIndex++;
+        } while ($yearIndex <= $endYear);
+
+        $sqlQuery = implode(" UNION ALL ", $sqlBuild);
+        $sql = $this->db->prepare($sqlQuery);
+        $sql->bindValue(":clubID", $data['cID']);
+        $sql->execute();
+
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
     public function isCountry($data) {
         $sql = $this->db->prepare('SELECT cty FROM clubs WHERE ID = :cID');
         $sql->bindValue(":cID", $data['cID']);
@@ -14,6 +33,28 @@ class club extends DB {
         return $sql->fetch(PDO::FETCH_COLUMN);      
     }
 
+    public function getClubData($data) {
+        $sql = $this->db->prepare('SELECT clubName, Facebook, Twitter, Web
+                                   FROM clubs
+                                   WHERE id = :clubID');
+        $sql->bindValue(":clubID", $data['cID']);
+        $sql->execute();
+        return $sql->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getFencerMedals($fencerID, $clubID) {
+        $sql = $this->db->prepare('SELECT 
+                                    SUM(CASE WHEN eventPosition = 1 THEN 1 ELSE 0 END) AS Gold,
+                                    SUM(CASE WHEN eventPosition = 2 THEN 1 ELSE 0 END) AS Silver,
+                                    SUM(CASE WHEN eventPosition = 3 THEN 1 ELSE 0 END) AS Bronze
+                                   FROM results 
+                                   WHERE fencerID = :fencerID AND fencerClubID = :clubID AND eventPosition <= 3');
+        $sql->bindValue(":fencerID", $fencerID);
+        $sql->bindValue(":clubID", $clubID);
+        $sql->execute();
+        return $sql->fetch(PDO::FETCH_ASSOC);
+    }
+    
     public function getClubFencers($data) {
         $res['data'] = [];
         $sql = $this->db->prepare('SELECT fencerFirstname, fencerSurname, fencerFullname, fencerID, yob, fencers.country, 
@@ -56,8 +97,15 @@ class club extends DB {
             $sql->execute();
 
             $clubsData = $sql->fetch(PDO::FETCH_ASSOC);      
-
+            
             $row['Active'] = $clubsData['fencerClubID'] == $data['cID'] ? true : false;
+
+            $medals = $this->getFencerMedals($row['fencerID'], $data['cID']);
+
+            $row['Gold'] = $medals['Gold'] != '' ? $medals['Gold'] : 0;
+            $row['Silver'] = $medals['Silver'] != '' ? $medals['Silver'] : 0;
+            $row['Bronze'] = $medals['Bronze'] != '' ? $medals['Bronze'] : 0;
+
             $row['blank'] = '';
             $res['data'][] = $row;
         }
