@@ -22,6 +22,7 @@
             
             $('.fencer-header').html(fData[0].fencerFullname + "<br><span style='font-size:87%; color:#777;'>" + strapLine + "</span");
             $(document).prop('title', 'epee.me - Fencer Profile | ' + fData[0].fencerFullname);
+            $("meta[name='description']").attr('content', 'Results & ranking data for ' + fData[0].fencerFullname + ' from LPJS, Elite Epee, BYC, EYC, EFC, FIE and other youth, cadet, junior & senior fencing competitions.');
 
             $.ajax({
                 url: 'main/c.php?m=fencer&id=getFencerClub&fencerID=' + fencerID,
