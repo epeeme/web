@@ -47,10 +47,10 @@
                                 } while ($currentYear >= $startYear);
                               ?>
                             </select></span>
-                            <span style="margin-left:12px"><select name="sex" class="sex">
+                            <span style="margin-left:12px"><select name="catID" class="sex">
                               <option value="">Sex</option>
-                              <option value="male">Male</option>
-                              <option value="female">Female</option>
+                              <option value="6">Male</option>
+                              <option value="2">Female</option>
                             </select></span>
                             <button id="getRankButton" type="button" class="btn btn-primary"> Go! </button>
                             </div>
@@ -81,7 +81,7 @@
             var sex = getParameterByName('s');
             if ((season) && (sex)) {
                 $('select[name="season"]').val(season);
-                $('select[name="sex"]').val(sex);
+                $('select[name="catID"]').val(sex);
                 $('#getRankButton').trigger('click');
             } else {
               cadet.Rankings();        
