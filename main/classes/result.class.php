@@ -9,6 +9,11 @@ require_once "junior.class.php";
 
 class result extends DB {
     
+    public function __construct($cfg) {
+        $this->config = $cfg;
+        parent::__construct($this->config);
+    }
+
     public function getEventDetails($data) {
         $sql = $this->db->prepare('SELECT eventType, eventName, DATE_FORMAT(fullDate,\'%D %M %Y\') AS eventDate, 
                                           age, sex, NIFFvalue, year, nominated, catID, eventData.eventID, 
@@ -139,7 +144,7 @@ class result extends DB {
 
         $resultData = $sql->fetchAll(PDO::FETCH_ASSOC);      
 
-        if (($resultData[0]['nominated'] == 2) || ($resultData[0]['nominated'] == 3)) $cadet = new cadet();
+        if (($resultData[0]['nominated'] == 2) || ($resultData[0]['nominated'] == 3)) $cadet = new cadet($this->config);
         if ($resultData[0]['nominated'] == 4) $junior = new junior();
         foreach ($resultData as $row) {
             $row['eventPositionDisplay'] = $this->placeSuffix($row['eventPosition']);

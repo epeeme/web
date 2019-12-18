@@ -9,6 +9,13 @@ require_once "junior.class.php";
 
 class event extends DB {
     
+    protected $config = null;
+    
+    public function __construct($cfg) {
+        $this->config = $cfg;
+        parent::__construct($this->config);
+    }
+    
     public function getNumberOfCategories($data) {
         $sql = $this->db->prepare('SELECT DISTINCT catID, categories.sex, age
                                    FROM eventData 
@@ -92,7 +99,7 @@ class event extends DB {
 
         $resultData = $sql->fetchAll(PDO::FETCH_ASSOC);      
 
-        if (($resultData[0]['nominated'] == 2) || ($resultData[0]['nominated'] == 3)) $cadet = new cadet();
+        if (($resultData[0]['nominated'] == 2) || ($resultData[0]['nominated'] == 3)) $cadet = new cadet($this->config);
         if ($resultData[0]['nominated'] == 4) $junior = new junior();
         
         foreach ($resultData as $row) {
