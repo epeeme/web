@@ -194,9 +194,9 @@ class cadet extends DB {
         $sql = $this->db->prepare('SELECT eventPosition
                                    FROM results 
                                    WHERE eventID = :eventID AND fencerID = :fencerID AND dateID = :dateID');
-        $sql->bindValue(":eventID", $data['eventID']);
-        $sql->bindValue(":dateID", $data['dateID']);
-        $sql->bindValue(":fencerID", $data['fencerID']);
+        $sql->bindValue(":eventID", (int)$data['eventID']);
+        $sql->bindValue(":dateID", (int)$data['dateID']);
+        $sql->bindValue(":fencerID", (int)$data['fencerID']);
         $sql->execute();
 
         $place = $sql->fetch(PDO::FETCH_COLUMN);
@@ -229,7 +229,7 @@ class cadet extends DB {
 
         switch ($eventType) {
             case 'BRC' :
-            case 'BCC' :
+            case 'BSC' :
             case 'BCC' : {
                 if (($place <= floor(($entries/ 100) * 80)) && ($place <= 64)) {
                     if ($place == 1) $points = 40;
@@ -252,7 +252,7 @@ class cadet extends DB {
             }
             case 'EFC' : {
                 if ($place <= floor(($entries/ 100) * 80)) {
-                    if ($place == 1) $points = 40;
+                    if ($place == 1) $points = 40 * $coef;
                         else if ($place == 2) $points = 36 * $coef; 
                         else if ($place == 3) $points = 32 * $coef; 
                         else if ($place == 5) $points = 27 * $coef; 
