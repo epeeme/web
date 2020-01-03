@@ -20,6 +20,8 @@ class cadet extends DB {
     const EUROS = 163;
     const WORLDS = 197;
     
+    const EFC_DATA_START = 2005;
+
     private function setSeasonStartEnd($season) {
 
         $sql = $this->db->prepare('SELECT DISTINCT fullDate 
@@ -28,16 +30,14 @@ class cadet extends DB {
         $sql->bindValue(":year", $season);
         $sql->execute();
         $this->seasonStart = $sql->fetch(PDO::FETCH_COLUMN);
+        if (empty($this->seasonStart)) $this->seasonStart = $season.'-04-31';
         $sql = $this->db->prepare('SELECT DISTINCT fullDate 
                                    FROM eventData LEFT JOIN eventDates ON eventDates.eventID = eventData.eventID AND eventData.dateID = eventDates.id 
                                    WHERE eventData.eventID = 197 AND year = :year');
         $sql->bindValue(":year", ($season + 1));
         $sql->execute();
-        $this->easonEnd = $sql->fetch(PDO::FETCH_COLUMN);
-
-        if (empty($this->easonEnd)) {
-            $this->seasonEnd = date('Y-m-d');
-        }
+        $this->seasonEnd = $sql->fetch(PDO::FETCH_COLUMN);
+        if (empty($this->seasonEnd)) $this->seasonEnd = ($season+1).'-04-31';
 
     }
 
@@ -190,6 +190,81 @@ class cadet extends DB {
         return $res; 
     }    
 
+    public function efcHistory($data) {
+        
+        $res['data'] = [];
+
+        $seasonEnd = self::EFC_DATA_START;
+        if ($data['season'] == '-1') {
+            $seasonTracker = (int)date('Y');
+        } else {
+            $seasonTracker = (int)$data['season'];
+            $seasonEnd = $seasonTracker - 3;
+        }
+
+        $seasonSQL = '';
+        $params = null;
+
+        while ($seasonTracker >= $seasonEnd) {
+
+            $this->setSeasonStartEnd($seasonTracker);
+            
+            $seasonSQL .= 'SUM(CASE WHEN fullDate > ? AND fullDate <= ? THEN 1 END) AS Season_'.$seasonTracker.'_Count,
+                           SUM(CASE WHEN fullDate > ? AND fullDate <= ? THEN (100 / entries) * eventPosition END) AS Season_'.$seasonTracker.'_Total,';
+           
+            $params[] = $this->seasonStart;
+            $params[] = $this->seasonEnd;    
+            $params[] = $this->seasonStart;
+            $params[] = $this->seasonEnd;    
+
+            $seasonTracker -=1;
+        };
+
+        $params[] = $data['catID'];
+        $params[] = $data['catID'];    
+        $params[] = $data['country'];    
+        
+        $sql = $this->db->prepare('SELECT '.$seasonSQL.' results.fencerID, fencerFirstname, fencerSurname, yob, efr
+                                   FROM results 
+                                   INNER JOIN eventData ON eventData.eventID = results.eventID AND eventData.dateID = results.dateID
+                                   INNER JOIN eventDates ON eventDates.eventID = eventData.eventID AND eventDates.ID = results.dateID
+                                   INNER JOIN fencers ON fencers.ID = results.fencerID 
+                                   INNER JOIN events ON events.ID = results.eventID     
+                                   WHERE eventData.catID = ? AND results.eventCat = ? AND fencerClubID = ? AND eventType = \'EFC\' AND eventPosition <> 9999
+                                   GROUP BY results.fencerID');
+
+        $sql->execute($params);
+
+        $fencerData = $sql->fetchAll(PDO::FETCH_ASSOC);      
+
+        $seasonTracker = isset($data['season']) ? (int)$data['season'] : (int)date('Y');
+
+        foreach ($fencerData as $row) {
+            
+            $seasonTrackerTemp = $seasonTracker;
+            $overallCount = 0;
+            $overallTotal = 0;
+            while ($seasonTrackerTemp >= $seasonEnd) {
+                $overallCount += $row['Season_'.$seasonTrackerTemp.'_Count'];
+                $overallTotal += $row['Season_'.$seasonTrackerTemp.'_Total'];
+                $seasonTrackerTemp -= 1;
+            }
+            
+            $row['Overall_Count'] = $overallCount;
+            $row['Overall_Total'] = $overallTotal;
+            $row['blank'] = '';
+            if ($data['season'] == '-1') {
+                $res['data'][] = $row;
+            } else if ($row['Season_'.$data['season'].'_Count']) {
+                $res['data'][] = $row;
+
+            }
+        }
+
+        return $res; 
+
+    }
+
     public function getCadetPoints($data) {
         $sql = $this->db->prepare('SELECT eventPosition
                                    FROM results 
@@ -274,10 +349,22 @@ class cadet extends DB {
         return $points;
     }
 
+    public function efcCountryList($data) {
+        $sql = $this->db->prepare('SELECT DISTINCT clubs.ID, clubName
+                                   FROM results 
+                                   INNER JOIN events ON events.ID = results.eventID     
+                                   INNER JOIN clubs ON clubs.ID = results.fencerClubID
+                                   WHERE results.eventCat IN (6,2) AND eventType = \'EFC\' AND clubs.ID <> 415
+                                   ORDER BY clubName ASC');       
+        $sql->execute();
+
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     private function ptsSort($a, $b) {
         return ($b['pts'] * 10) - ($a['pts'] * 10);
     }
-    
+        
     private function placeSuffix($number) {
         $ends = array('th','st','nd','rd','th','th','th','th','th','th');
         if ((($number % 100) >= 11) && (($number%100) <= 13)) return $number. 'th';
