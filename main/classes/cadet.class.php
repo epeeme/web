@@ -100,6 +100,9 @@ class cadet extends DB {
            $threeHighestInternational = [];
            $Domestic = [];
            $International = [];
+
+           $row['cadetNationals'] = 9999;
+
            for ($i=0; $i<count($seriesData); $i++) { 
 
                 $cadetPoints = $this->getCadetPoints(['fencerID' => $row['fencerID'], 
@@ -118,7 +121,7 @@ class cadet extends DB {
                 if ($row['e'.$i.'_place'] > 0) {
                     switch ($seriesData[$i]['eventType']) {
                         case 'BRC' :
-                        case 'BCC' :
+                        case 'BSC' :
                         case 'BCC' : {
                             if (count($threeHighestDomestic) < 3) {
                                 array_push($threeHighestDomestic, ['points'=>$cadetPoints['points'], 'index'=>$i]);
@@ -128,6 +131,7 @@ class cadet extends DB {
                                     $threeHighestDomestic[$lowValuePosition] = ['points'=>$cadetPoints['points'], 'index'=>$i];
                                 }
                             }
+                            if ($seriesData[$i]['eventType'] == 'BCC') $row['cadetNationals'] = $row['e'.$i.'_place'];
                             array_push($Domestic, (100 / $seriesData[$i]['entries']) * $row['e'.$i.'_place']);
                             break;
                         }
@@ -162,9 +166,17 @@ class cadet extends DB {
             for ($i=0;$i<count($threeHighestDomestic);$i++) {
                 $row['e'.$threeHighestDomestic[$i]['index'].'_pointsHi'] = true;
             }
+
+            $highestInternational = 0;
             for ($i=0;$i<count($threeHighestInternational);$i++) {
+                if ($threeHighestInternational[$i]['points'] > $highestInternational ) {
+                    $highestInternational = $threeHighestInternational[$i]['points'];
+                }
                 $row['e'.$threeHighestInternational[$i]['index'].'_pointsHi'] = true;
             }
+
+            // Data for secondary sorting for fencers with equal points
+            $row['highestInternational'] = $highestInternational;
 
             $row['blank'] = '';
             $res['data'][] = $row;
@@ -174,6 +186,7 @@ class cadet extends DB {
         // send it back.
 
         uasort($res['data'], array($this, "ptsSort"));
+
         $res = array_values($res['data']);
         $points = null;
         $position = null;        
@@ -210,12 +223,14 @@ class cadet extends DB {
             $this->setSeasonStartEnd($seasonTracker);
             
             $seasonSQL .= 'SUM(CASE WHEN fullDate > ? AND fullDate <= ? THEN 1 END) AS Season_'.$seasonTracker.'_Count,
-                           SUM(CASE WHEN fullDate > ? AND fullDate <= ? THEN (100 / entries) * eventPosition END) AS Season_'.$seasonTracker.'_Total,';
+                           SUM(CASE WHEN fullDate > ? AND fullDate <= ? THEN (100 / entries) * eventPosition END) AS Season_'.$seasonTracker.'_Total,
+                           SUM(CASE WHEN results.eventID = '.self::EUROS.' AND (fullDate > ? AND fullDate <= ?) THEN 1 ELSE 0 END) AS Season_'.$seasonTracker.'_Euros,
+                           SUM(CASE WHEN results.eventID = '.self::WORLDS.' AND (fullDate > ? AND fullDate <= ?) THEN 1 ELSE 0 END) AS Season_'.$seasonTracker.'_Worlds,';
            
-            $params[] = $this->seasonStart;
-            $params[] = $this->seasonEnd;    
-            $params[] = $this->seasonStart;
-            $params[] = $this->seasonEnd;    
+            $params[] = $this->seasonStart; $params[] = $this->seasonEnd;    
+            $params[] = $this->seasonStart; $params[] = $this->seasonEnd;    
+            $params[] = $this->seasonStart; $params[] = $this->seasonEnd;    
+            $params[] = $this->seasonStart; $params[] = $this->seasonEnd;    
 
             $seasonTracker -=1;
         };
@@ -362,7 +377,11 @@ class cadet extends DB {
     }
 
     private function ptsSort($a, $b) {
-        return ($b['pts'] * 10) - ($a['pts'] * 10);
+        $rdiff = ($b['pts'] * 10) - ($a['pts'] * 10);
+        if ($rdiff) return $rdiff; 
+        $rdiff = $b['highestInternational'] - $a['highestInternational']; 
+        if ($rdiff) return $rdiff; 
+        return $a['cadetNationals'] - $b['cadetNationals'];
     }
         
     private function placeSuffix($number) {
