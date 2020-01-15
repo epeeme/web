@@ -24,6 +24,7 @@
             $(document).prop('title', 'epee.me - Fencer Profile | ' + fData[0].fencerFullname);
             $("meta[name='description']").attr('content', 'Results & ranking data for ' + fData[0].fencerFullname + ' from LPJS, Elite Epee, BYC, EYC, EFC, FIE and other youth, cadet, junior & senior fencing competitions.');
 
+
             $.ajax({
                 url: 'main/c.php?m=fencer&id=getFencerClub&fencerID=' + fencerID,
             }).done(function(cData) {            
@@ -319,5 +320,26 @@
         });
 
     }
+    
+    fencer.Merge = function() {
+        $.ajax({
+            url: '/main/c.php?m=fencer&id=mergeRecords&oldID=' + $('input[name="oldID"]').val() +'&newID=' + $('input[name="newID"]').val() + '&key=' +$('input[name="key"]').val(),
+        }).done(function(result) {
+            if (result === true) {
+                if (confirm('Records merged!')){
+                    window.location.reload();  
+                }
+            } else {
+                alert('Merge failed!');
+            }
+        });
+    }
+
+    $('#mergeButton').on('click', function() {
+      if ($('input[name="oldID"]').val() !== '' && $('input[name="newID"]').val() !== '' && $('input[name="key"]').val() !== '') {
+          fencer.Merge();
+      }
+  });
+
 
 }(window.fencer = window.fencer || {}, jQuery));
