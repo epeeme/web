@@ -7,6 +7,13 @@ require_once "DB.class.php";
 
 class fencer extends DB {
 
+    private $key = null;
+
+    public function __construct($cfg) {
+        parent::__construct($cfg);
+        $this->key = $cfg['admin']['key'];
+    }
+    
     public function getFinishingPositions($data) {        
         $sql = $this->db->prepare('SELECT SUM(CASE WHEN eventPosition = 1 THEN 1 ELSE 0 END) AS PC, \'1st\' AS Position FROM results WHERE fencerID = :fencerID
                                     UNION ALL SELECT SUM(CASE WHEN eventPosition = 2 THEN 1 ELSE 0 END) AS PC, \'2nd\' AS Position  FROM results WHERE fencerID = :fencerID
@@ -195,8 +202,34 @@ class fencer extends DB {
         return $res; 
     }    
 
-    private function placeSuffix($number)
-    {
+    public function mergeRecords($data) {
+
+        $success = false;
+
+        if (is_numeric($data['newID']) && is_numeric($data['oldID']) && ($data['key'] == $this->key)) {
+            $sql = $this->db->prepare('SELECT count(*) FROM fencers WHERE ID = :newID');
+            $sql->bindValue(":newID", $data['newID']);
+            $sql->execute();        
+            $res = $sql->fetch(PDO::FETCH_COLUMN);
+
+            if ($res > 0) {
+                $sql = $this->db->prepare('UPDATE results SET fencerID = :newID WHERE fencerID = :oldID');
+                $sql->bindValue(":newID", $data['newID']);
+                $sql->bindValue(":oldID", $data['oldID']);
+                $sql->execute();        
+
+                $sql = $this->db->prepare('DELETE FROM fencers WHERE ID = :oldID');
+                $sql->bindValue(":oldID", $data['oldID']);
+                $sql->execute();
+
+                $success = true;
+            }
+        }
+
+        return $success;
+    }
+
+    private function placeSuffix($number) {
         $ends = array('th','st','nd','rd','th','th','th','th','th','th');
         if ((($number % 100) >= 11) && (($number%100) <= 13)) return $number. 'th';
             else return $number. $ends[$number % 10];
