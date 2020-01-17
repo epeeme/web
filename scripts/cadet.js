@@ -181,6 +181,120 @@
 
     }
   
+    cadet.efcEventHistory = function () {
+
+        $('.index').html('<table id="efc" cellpadding="0" cellspacing="0" class="display compact nowrap" width="100%"><thead></thead><tbody></tbody><tfoot></tfoot></table>');
+
+        var gender = $('.demographics form select[name="catID"]').val() == 6 ? 'Male' : 'Female';
+        var country = $('.demographics form select[name="country"]').val();
+
+        var tableTitle = 'EFC Event History';
+
+        var tableHtml = '<tr><th>Event</th><th>Entries</th><th>Avg Pos.</th><th>Avg % Pos.</th><th><span style="color:#F7F74C;">G</span></th><th><span style="color:#C3C3C3;">S</span></th><th><span style="color:#B58231;">B</span></th><th>L8</th><th>L16</th><th>L32</th><th>L64</th><th>L128</th><th>L256</th><th>L512</th><th></th></tr>';
+        $('.index table thead').html(tableHtml); 
+        
+        tableHtml = '<tr><th>Totals</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>';
+        $('.index table tfoot').html(tableHtml); 
+        
+        $('.index table thead th[colspan]').wrapInner( '<span/>' ).append( '&nbsp;' );
+        $('.loading').hide();
+
+        $.ajax({
+            url: 'main/c.php?m=cadet&id=efcEventHistory&' + $('.demographics form').serialize(),
+        }).done(function(response) {
+            $('#efc').DataTable( {
+                dom: '<"toolbar"flBtip>',
+                data: response.data,
+                columnDefs: [ {
+                    className: 'control',
+                    orderable: false,
+                    targets: -1
+                } ],
+                columns: [
+                    { data: "eventName" },
+                    { data: "entries" },
+                    { data: "position" },
+                    { data: null,
+                      render: function (data, type, row) {
+                        return ((100 / row.entries) * row.position).toFixed(2);
+                       } 
+                    },
+                    { data: "first", className: "heatmap" },
+                    { data: "second", className: "heatmap" },
+                    { data: "third", className: "heatmap" },
+                    { data: "last8", className: "heatmap" },
+                    { data: "last16", className: "heatmap" },
+                    { data: "last32", className: "heatmap" },
+                    { data: "last64", className: "heatmap" },
+                    { data: "last128", className: "heatmap" },
+                    { data: "last256", className: "heatmap" },
+                    { data: "last512", className: "heatmap" },
+                    { data: "blank" }
+                  ],
+                order: [ 3, "asc" ],
+                autoWidth: false,
+                pageLength: 100,   
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: -1
+                    },
+                },
+                language: {
+                    searchPlaceholder: "Filter results",
+                    emptyTable: "Select from the options above to view rankings",
+                    search: "_INPUT_",
+                    lengthMenu: "_MENU_ rows",
+                },            
+                buttons: [
+                    {
+                        extend: 'collection',
+                        text: 'Export',
+                        buttons: [
+                            {
+                                extend: 'excelHtml5',
+                                messageTop: tableTitle
+                            },
+                            {
+                                extend: 'csvHtml5',
+                            },
+                            {
+                                extend: 'pdfHtml5',
+                                messageTop: tableTitle
+                            },
+                            {
+                                extend: 'copyHtml5',
+                                messageTop: tableTitle
+                            }                        
+                        ],
+                    }
+                ],
+                drawCallback: function (settings) {
+                    $("tbody .heatmap").hottie({ readValue : 
+                                              function(e) { if ($(e)[0].innerText != '0') return $(e)[0].innerText; },
+                                           colorArray : 
+                                              [  "#8cc6e6", "#FFFFFF" ] });
+                },
+                footerCallback: function (row, data, start, end, display) {                  
+                    var api = this.api();
+                    for (var i=4; i <=13; i++) {
+                        var columnData = api.column(i).data();                   
+                        var theColumnTotal = columnData.reduce(
+                            function (a, b) {
+                                a = parseFloat(a);
+                                b = parseFloat(b);
+                                return (a + b);
+                            }, 0);
+                        $(api.column(i).footer()).html(theColumnTotal);
+                    }
+                    $(api.column(2).footer()).html(response.ap);
+                    $(api.column(3).footer()).html(((100/(response.te/columnData.count()))*response.ap).toFixed(2));                    
+                },            
+            });
+        });
+
+    }
+    
     cadet.efcCountryList = function () {
         $.ajax({
             url: 'main/c.php?m=cadet&id=efcCountryList',
@@ -278,7 +392,10 @@
                         render: function (data, type, row) {
                             var count = eval('row.Season_' + (season - 3) + '_Count');
                             var total = eval('row.Season_' + (season - 3) + '_Total');
-                            return count > 0 ? (total / count).toFixed(2) : '';
+                            if (type == "sort" || type == 'type') return count > 0 ? (total / count).toFixed(2) : '';
+                            var euros = eval('row.Season_' + (season - 3) + '_Euros') == 1 ? 'E' : '&nbsp;';
+                            var worlds = eval('row.Season_' + (season - 3) + '_Worlds') == 1 ? 'W ' : '&nbsp;';
+                            return count > 0 ? (total / count).toFixed(2) + ' <span class="text-primary text-monospace">' + euros + '</span><span class="text-info text-monospace">' + worlds + '</span>' : '';
                         },
                         className: "heatmap",
                         responsivePriority: 98 };
@@ -287,7 +404,10 @@
                         render: function (data, type, row) {
                             var count = eval('row.Season_' + (season - 2) + '_Count');
                             var total = eval('row.Season_' + (season - 2) + '_Total');
-                            return count > 0 ? (total / count).toFixed(2) : '';
+                            if (type == "sort" || type == 'type') return count > 0 ? (total / count).toFixed(2) : '';
+                            var euros = eval('row.Season_' + (season - 2) + '_Euros') == 1 ? 'E' : '&nbsp;';
+                            var worlds = eval('row.Season_' + (season - 2) + '_Worlds') == 1 ? 'W ' : '&nbsp;';
+                            return count > 0 ? (total / count).toFixed(2) + ' <span class="text-primary text-monospace">' + euros + '</span><span class="text-info text-monospace">' + worlds + '</span>' : '';
                         },
                         className: "heatmap",
                         responsivePriority: 96 };
@@ -296,7 +416,10 @@
                         render: function (data, type, row) {
                             var count = eval('row.Season_' + (season - 1) + '_Count');
                             var total = eval('row.Season_' + (season - 1) + '_Total');
-                            return count > 0 ? (total / count).toFixed(2) : '';
+                            if (type == "sort" || type == 'type') return count > 0 ? (total / count).toFixed(2) : '';
+                            var euros = eval('row.Season_' + (season - 1) + '_Euros') == 1 ? 'E' : '&nbsp;';
+                            var worlds = eval('row.Season_' + (season - 1) + '_Worlds') == 1 ? 'W ' : '&nbsp;';
+                            return count > 0 ? (total / count).toFixed(2) + ' <span class="text-primary text-monospace">' + euros + '</span><span class="text-info text-monospace">' + worlds + '</span>' : '';
                         },
                         className: "heatmap",
                         responsivePriority: 94 };                
@@ -305,14 +428,18 @@
                         render: function (data, type, row) {
                             var count = eval('row.Season_' + season + '_Count');
                             var total = eval('row.Season_' + season + '_Total');
-                            return count > 0 ? (total / count).toFixed(2) : '';
+                            if (type == "sort" || type == 'type') return count > 0 ? (total / count).toFixed(2) : '';
+                            var euros = eval('row.Season_' + season + '_Euros') == 1 ? 'E' : '&nbsp;';
+                            var worlds = eval('row.Season_' + season + '_Worlds') == 1 ? 'W ' : '&nbsp;';
+                            return count > 0 ? (total / count).toFixed(2) + ' <span class="text-primary text-monospace">' + euros + '</span><span class="text-info text-monospace">' + worlds + '</span>' : '';
                         },
                         className: "heatmap",
                         responsivePriority: 92 };
         columns[11] = { data: "Overall_Count", responsivePriority: 91 };
         columns[12] = { data: "Overall_Total",
                         render: function (data, type, row) {
-                            return (row.Overall_Total / row.Overall_Count).toFixed(2);
+                            if (type == "sort" || type == 'type') return (row.Overall_Total / row.Overall_Count).toFixed(2);
+                            return (row.Overall_Total / row.Overall_Count).toFixed(2) + ' <span class="text-primary text-monospace">&nbsp;&nbsp;</span>';
                         },
                         className: "heatmap",
                         responsivePriority: 90 };
@@ -333,6 +460,12 @@
         $('.index').show();            
         cadet.efcHistory();
     });
-    
+
+    $('#getEventHistoryButton').on('click', function() {
+        $('.loading').show();
+        $('.index').show();            
+        cadet.efcEventHistory();
+    });
+
   }(window.cadet = window.cadet || {}, jQuery));
   
