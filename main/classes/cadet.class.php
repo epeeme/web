@@ -11,7 +11,7 @@ class cadet extends DB {
     private $seasonEnd = null;
 
     // As Cadet Rankings are made up of BRC and EFC events, a pseudo series needs to be created
-    private $cadetSQL = '(((eventType = \'BRC\' OR eventType = \'BCC\') AND nominated IN (1,2,3)) OR (eventType = \'EFC\' AND nominated IN (1,2,3)))';
+    private $cadetSQL = '(((eventType = \'BRC\' OR eventType = \'BCC\' OR eventType = \'BSC\') AND nominated IN (1,2,3)) OR (eventType = \'EFC\' AND nominated IN (1,2,3)))';
 
     // Include only fencers from certain countries in the ranking list
     private $countries = array('\'ENG\'', '\'SCO\'', '\'WAL\'', '\'GBR\'', '\'NIR\'', '\'GUE\'');
@@ -280,6 +280,71 @@ class cadet extends DB {
 
     }
 
+    public function efcEventHistory($data) {
+        
+        $res['data'] = [];
+
+        $params = null;
+
+        if ($data['season'] > 0) {
+            $this->setSeasonStartEnd($data['season']);
+            $params[] = $this->seasonStart;
+            $params[] = $this->seasonEnd;    
+        } else {
+            $params[] = self::EFC_DATA_START;
+            $params[] = date('Y-m-d');    
+        }
+
+        $params[] = $data['catID'];
+        $params[] = $data['catID'];    
+        $params[] = $data['country'];    
+            
+        $sql = $this->db->prepare('SELECT events.eventName,
+                                          CAST(AVG(entries) AS Integer) AS entries, CAST(AVG(eventPosition) AS Integer) AS position, 
+                                          SUM(CASE WHEN eventPosition = 1 THEN 1 ELSE 0 END) AS first, 
+                                          SUM(CASE WHEN eventPosition = 2 THEN 1 ELSE 0 END) AS second, 
+                                          SUM(CASE WHEN eventPosition = 3 THEN 1 ELSE 0 END) AS third, 
+                                          SUM(CASE WHEN eventPosition > 3 AND eventPosition < 9 THEN 1 ELSE 0 END) AS last8, 
+                                          SUM(CASE WHEN eventPosition > 8 AND eventPosition < 17 THEN 1 ELSE 0 END) AS last16, 
+                                          SUM(CASE WHEN eventPosition > 16 AND eventPosition < 33 THEN 1 ELSE 0 END) AS last32, 
+                                          SUM(CASE WHEN eventPosition  > 32 AND eventPosition < 65 THEN 1 ELSE 0 END) AS last64, 
+                                          SUM(CASE WHEN eventPosition  > 64 AND eventPosition < 129 THEN 1 ELSE 0 END) AS last128, 
+                                          SUM(CASE WHEN eventPosition  > 128 AND eventPosition < 257 THEN 1 ELSE 0 END) AS last256, 
+                                          SUM(CASE WHEN eventPosition  > 256 AND eventPosition < 513 THEN 1 ELSE 0 END) AS last512
+                                  FROM results 
+                                  LEFT OUTER JOIN events ON events.ID  = results.eventID 
+                                  LEFT OUTER JOIN eventData ON eventData.eventID = results.eventID AND results.dateID = eventData.dateID 
+                                  LEFT OUTER JOIN eventDates ON eventDates.eventID = eventData.eventID AND eventDates.ID = results.dateID
+                                  WHERE (fullDate > ? and fullDate <= ?) AND eventData.catID = ? AND results.eventCat = ? AND eventType = \'EFC\' AND fencerClubID = ?
+                                  GROUP BY events.eventName');
+                
+        $sql->execute($params);
+        $eventData = $sql->fetchAll(PDO::FETCH_ASSOC);      
+
+        $totalEntries = 0;
+
+        foreach ($eventData as $row) {                        
+            $totalEntries += $row['entries'];
+            $row['blank'] = '';
+            $res['data'][] = $row;
+        }
+
+        $sql = $this->db->prepare('SELECT CAST(AVG(eventPosition) AS Integer) AS averagePosition
+                                   FROM results 
+                                   LEFT OUTER JOIN events ON events.ID  = results.eventID 
+                                   LEFT OUTER JOIN eventData ON eventData.eventID = results.eventID AND results.dateID = eventData.dateID 
+                                   LEFT OUTER JOIN eventDates ON eventDates.eventID = eventData.eventID AND eventDates.ID = results.dateID
+                                   WHERE (fullDate > ? and fullDate <= ?) AND eventData.catID = ? AND results.eventCat = ? AND eventType = \'EFC\' AND fencerClubID = ?');                
+        $sql->execute($params);
+        $ap = $sql->fetch(PDO::FETCH_ASSOC);      
+
+        $res['ap'] =  $ap['averagePosition'];
+        $res['te'] =  $totalEntries;
+
+        return $res; 
+
+    }
+    
     public function getCadetPoints($data) {
         $sql = $this->db->prepare('SELECT eventPosition
                                    FROM results 
@@ -391,4 +456,3 @@ class cadet extends DB {
     }
 
 }
-
