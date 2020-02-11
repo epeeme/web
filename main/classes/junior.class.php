@@ -211,14 +211,14 @@ class junior extends DB {
 
         $sql = $this->db->prepare('SELECT DISTINCT fullDate 
                                    FROM eventData LEFT JOIN eventDates ON eventDates.eventID = eventData.eventID AND eventData.dateID = eventDates.id 
-                                   WHERE eventData.eventID = 197 AND year = :year');
+                                   WHERE eventData.eventID = '.self::WORLDS.' AND year = :year');
         $sql->bindValue(":year", $season);
         $sql->execute();
         $this->seasonStart = $sql->fetch(PDO::FETCH_COLUMN);
         if (empty($this->seasonStart)) $this->seasonStart = $season.'-04-31';
         $sql = $this->db->prepare('SELECT DISTINCT fullDate 
                                    FROM eventData LEFT JOIN eventDates ON eventDates.eventID = eventData.eventID AND eventData.dateID = eventDates.id 
-                                   WHERE eventData.eventID = 197 AND year = :year');
+                                   WHERE eventData.eventID = '.self::WORLDS.' AND year = :year');
         $sql->bindValue(":year", ($season + 1));
         $sql->execute();
         $this->seasonEnd = $sql->fetch(PDO::FETCH_COLUMN);
