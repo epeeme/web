@@ -12,7 +12,7 @@
             url: 'main/c.php?m=cadet&id=getSeasonSize&' + $('.demographics form').serialize(),
         }).done(function(cols) {
             var tableHtml = '';
-            var columns = ['#', 'Pts', 'Dom %', 'Int %', 'Firstname', 'Surname', 'YoB', 'Club'];
+            var columns = ['#', 'Pts', 'Dom %', 'Firstname', 'Surname', 'YoB', 'Club'];
             for(var c=0; c < cols; c++) { columns.push(c+1); }
             columns.push('');
 
@@ -322,25 +322,25 @@
                             return row.domestic == '-' ? '<div class="text-right padpos">-</div>' : '<div class="text-right padpos">' + row.domestic.toFixed(2) + '</div>';
                         }, 
                         responsivePriority: 7 };
-        columns[3] = { data: "international",
+        /*columns[3] = { data: "international",
                         render: function (data, type, row) {
                             return row.international == '-' ? '<div class="text-right padpos">-</div>' : '<div class="text-right padpos">' + row.international.toFixed(2) + '</div>';
                         }, 
-                        responsivePriority: 8 };
-        columns[4] = { data: "fencerFirstname",
+                        responsivePriority: 8 };*/
+        columns[3] = { data: "fencerFirstname",
                         render: function (data, type, row) {
                         return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
                         },
                         responsivePriority: 4 };
-        columns[5] = { data: "fencerSurname",
+        columns[4] = { data: "fencerSurname",
                         render: function (data, type, row) {
                         return '<a href="fencer.php?f=' + row.fencerID+ '">' + data + '</a>';
                         },
                         responsivePriority: 3 };
-        columns[6] = { data: "yob", responsivePriority: 5 };
-        columns[7] = { data: "clubName", responsivePriority: 6 };
+        columns[5] = { data: "yob", responsivePriority: 5 };
+        columns[6] = { data: "clubName", responsivePriority: 999 };
         
-        var cc = 8;
+        var cc = 7;
         var ec = 0;
 
         if (json.data.length > 0) {
@@ -362,7 +362,7 @@
                                 '    }' +
                                 '} ';
                 var f = new Function('data', 'type', 'row', pointsCode + 'return row.e'+ec+'_place > 0 ? \'<span data-html="true" data-toggle="tooltip" title="\'+row.e'+ec+'_placeSuffix+\' &lt;BR&gt;\'+row.e'+ec+'_eventName+\' &lt;BR&gt;\'+row.e'+ec+'_eventDate+\'">\'+points+\'</span>\' : \'-\';');
-                columns[cc++] = { data: "e"+ec+"_points", render: f, responsivePriority: (10000+ec) };
+                columns[cc++] = { data: "e"+ec+"_points", render: f, responsivePriority: (10+ec) };
                 ec++;
             }
         }
