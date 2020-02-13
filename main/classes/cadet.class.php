@@ -26,14 +26,14 @@ class cadet extends DB {
 
         $sql = $this->db->prepare('SELECT DISTINCT fullDate 
                                    FROM eventData LEFT JOIN eventDates ON eventDates.eventID = eventData.eventID AND eventData.dateID = eventDates.id 
-                                   WHERE eventData.eventID = 197 AND year = :year');
+                                   WHERE eventData.eventID = '.self::WORLDS.' AND year = :year');
         $sql->bindValue(":year", $season);
         $sql->execute();
         $this->seasonStart = $sql->fetch(PDO::FETCH_COLUMN);
         if (empty($this->seasonStart)) $this->seasonStart = $season.'-04-31';
         $sql = $this->db->prepare('SELECT DISTINCT fullDate 
                                    FROM eventData LEFT JOIN eventDates ON eventDates.eventID = eventData.eventID AND eventData.dateID = eventDates.id 
-                                   WHERE eventData.eventID = 197 AND year = :year');
+                                   WHERE eventData.eventID = '.self::WORLDS.' AND year = :year');
         $sql->bindValue(":year", ($season + 1));
         $sql->execute();
         $this->seasonEnd = $sql->fetch(PDO::FETCH_COLUMN);
@@ -109,7 +109,7 @@ class cadet extends DB {
                                                       'dateID' => $seriesData[$i]['ID'], 
                                                       'eventID' => $seriesData[$i]['eventID'],
                                                       'eventType' => $seriesData[$i]['eventType'],
-                                                      'coef' => $seriesData[$i]['coef'],
+                                                      'coef' => isset($data['bf']) ?  $seriesData[$i]['coef2'] : $seriesData[$i]['coef'],
                                                       'f128' => $seriesData[$i]['f128'],
                                                       'entries' => $seriesData[$i]['entries']]);
                 $row['e'.$i.'_points'] = $cadetPoints['points'];
@@ -118,7 +118,7 @@ class cadet extends DB {
                 $row['e'.$i.'_eventName'] = $seriesData[$i]['eventName'];
                 $row['e'.$i.'_eventType'] = $seriesData[$i]['eventType'];
                 $row['e'.$i.'_eventDate'] = $seriesData[$i]['fullDateReal'];
-                if ($row['e'.$i.'_place'] > 0) {
+                if (($row['e'.$i.'_place'] > 0) && ($row['e'.$i.'_place'] <> 9999)) {
                     switch ($seriesData[$i]['eventType']) {
                         case 'BRC' :
                         case 'BSC' :
@@ -363,7 +363,7 @@ class cadet extends DB {
     }
 
     public function getSeriesBreakdown($data) {
-        $sql = $this->db->prepare('SELECT DISTINCT eventData.eventID, eventName, fullDate, DATE_FORMAT(fullDate,\'%D %b %Y\') AS fullDateReal, eventDates.ID, entries, eventType, coef, f128
+        $sql = $this->db->prepare('SELECT DISTINCT eventData.eventID, eventName, fullDate, DATE_FORMAT(fullDate,\'%D %b %Y\') AS fullDateReal, eventDates.ID, entries, eventType, coef, coef2, f128
                                    FROM events 
                                    LEFT JOIN eventDates ON eventDates.eventID = events.ID
                                    LEFT JOIN eventData ON eventData.eventID = events.ID AND eventData.dateID = eventDates.ID
